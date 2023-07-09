@@ -1,4 +1,4 @@
-import { Injectable } from '@nestjs/common';
+import { Injectable, NotFoundException } from '@nestjs/common';
 import { Movie } from './entities/movies.entity';
 
 @Injectable()
@@ -11,7 +11,11 @@ export class MoviesService {
     }
 
     getOne(id: string): Movie {
-        return this.movies.find(movie => movie.id === parseInt(id));
+        const movie = this.movies.find(movie => movie.id === parseInt(id));
+        if (!movie) {
+            throw new NotFoundException("존재하지 않는 영화 정보: " + id);
+        }
+        return movie;
     }
 
     createMovie(movieData) {
@@ -21,8 +25,17 @@ export class MoviesService {
         });
     }
 
-    deleteMovie(id: string): boolean {
+    deleteMovie(id: string) {
+        this.getOne(id);
         this.movies = this.movies.filter(movie => movie.id !== parseInt(id));
-        return true;
+    }
+
+    updateMovie(id: string, updateData) {
+        const movie = this.getOne(id);
+        this.deleteMovie(id);
+        this.movies.push({
+            ...movie, // 기존 데이터에
+            ...updateData // 변경 데이터를 가져와서 덮어쓴다.
+        });
     }
 }
