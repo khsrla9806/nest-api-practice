@@ -2,6 +2,7 @@ import { Body, Controller, Delete, Get, Param, Patch, Post, Query } from '@nestj
 import { MoviesService } from './movies.service';
 import { Movie } from './entities/movies.entity';
 import { CreateMovieDto } from './dto/create-movie.dto';
+import { UpdateMovieDto } from './dto/update-movie.dto';
 
 @Controller('movies')
 export class MoviesController {
@@ -35,7 +36,7 @@ export class MoviesController {
     }
 
     @Patch('/:id')
-    updateMovie(@Param('id') id: number, @Body() updateData) {
+    updateMovie(@Param('id') id: number, @Body() updateData: UpdateMovieDto) {
         this.movieService.updateMovie(id, updateData);
     }
 }
